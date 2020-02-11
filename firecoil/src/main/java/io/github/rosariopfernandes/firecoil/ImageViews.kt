@@ -1,7 +1,8 @@
 package io.github.rosariopfernandes.firecoil
 
 import android.widget.ImageView
-import coil.ImageLoader
+import coil.ComponentRegistry
+import coil.ImageLoaderBuilder
 import coil.api.loadAny
 import coil.request.LoadRequestBuilder
 import coil.request.RequestDisposable
@@ -11,11 +12,13 @@ inline fun ImageView.load(
     data: StorageReference,
     builder: LoadRequestBuilder.() -> Unit = {}
 ): RequestDisposable {
-    val imageLoader = ImageLoader(context) {
-        componentRegistry {
-            add(StorageReferenceFetcher())
-        }
-    }
+    val imageLoader = ImageLoaderBuilder(context)
+        .componentRegistry(
+            ComponentRegistry.Builder()
+                .add(StorageReferenceFetcher())
+                .build()
+        )
+        .build()
     return imageLoader.loadAny(context, data) {
         target(this@load)
         builder()
